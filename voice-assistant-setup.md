@@ -3,6 +3,9 @@
 - Part 1: Create assistant w/Raspberry Pi 4 + USB mic + raspOVOS
 - Part 2: Add LLM with `openai/gpt-4o-mini` for additional features
 
+_**Instructions:**_
+[https://github.com/jaredstanko/scratchpad/](https://github.com/jaredstanko/scratchpad/)
+
 ---
 
 ## Part 1 — raspOVOS + USB microphone 
