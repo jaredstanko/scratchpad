@@ -1,10 +1,11 @@
-## Simple setup instructions (Raspberry Pi 4 + **USB mic** + **raspOVOS**)
+# Building a Voice Assistant 
 
-…and **Part 2 uses OpenRouter** with **`openai/gpt-4o-mini`**
+- Part 1: Create assistant w/Raspberry Pi 4 + USB mic + raspOVOS
+- Part 2: Add LLM with `openai/gpt-4o-mini` for additional features
 
 ---
 
-# Part 1 — raspOVOS + USB microphone (working end-to-end)
+## Part 1 — raspOVOS + USB microphone 
 
 ### 1) Boot raspOVOS
 
@@ -88,7 +89,7 @@ If OVOS speaks but doesn’t hear you: it’s almost always the wrong `device` i
 
 ---
 
-# Part 2 — OpenRouter integration (model: **`openai/gpt-4o-mini`**) for short, thorough answers
+# Part 2 — LLM integration for short, thorough answers
 
 This uses OVOS “Personas” + the OVOS OpenAI solver plugin, pointed at OpenRouter’s OpenAI-compatible API.
 
@@ -187,7 +188,7 @@ sudo reboot
 After reboot:
 
 ```bash
-ovos-say-to "Explain what DHCP is."
+ovos-say-to "Explain what Petrichor is."
 ```
 
 Then try voice:
@@ -206,9 +207,8 @@ If configured correctly, the response should follow your “short but thorough�
 * OpenRouter is OpenAI-chat compatible and normalizes responses to OpenAI’s chat schema. ([OpenRouter][4])
 * If you ever change USB devices, your mic device index may change—re-check and adjust `"device"`.
 
-If you tell me what USB mic you’re using (exact model) and whether you have HDMI audio / a USB speaker plugged in too, I can suggest the most likely correct `device` index settings and a quick way to confirm it.
 
-[1]: https://github.com/OpenVoiceOS/ovos-openai-plugin?utm_source=chatgpt.com "OpenVoiceOS/ovos-openai-plugin - GitHub"
-[2]: https://openrouter.ai/docs/api/reference/authentication?utm_source=chatgpt.com "API Authentication | OpenRouter OAuth and API Keys | Documentation"
-[3]: https://openrouter.ai/openai/gpt-4o-mini?utm_source=chatgpt.com "GPT-4o-mini - API, Providers, Stats - OpenRouter"
-[4]: https://openrouter.ai/docs/api/reference/overview?utm_source=chatgpt.com "OpenRouter API Reference | Complete API Documentation"
+[1]: https://github.com/OpenVoiceOS/ovos-openai-plugin "OpenVoiceOS/ovos-openai-plugin - GitHub"
+[2]: https://openrouter.ai/docs/api/reference/authentication "API Authentication | OpenRouter OAuth and API Keys | Documentation"
+[3]: https://openrouter.ai/openai/gpt-4o-mini "GPT-4o-mini - API, Providers, Stats - OpenRouter"
+[4]: https://openrouter.ai/docs/api/reference/overview "OpenRouter API Reference | Complete API Documentation"
