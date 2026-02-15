@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What's Alive In You — Family Bucket List Card Deck</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,700;1,400&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  @page {
+    size: letter;
+    margin: 0.4in;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: #f5f5f0;
+    color: #1a1a1a;
+  }
+
+  /* Screen-only wrapper */
+  .screen-header {
+    text-align: center;
+    padding: 40px 20px 20px;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .screen-header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    color: #1a1a1a;
+    margin-bottom: 8px;
+  }
+
+  .screen-header p {
+    color: #666;
+    font-size: 0.95rem;
+    margin-bottom: 20px;
+  }
+
+  .print-btn {
+    background: #1a1a1a;
+    color: white;
+    border: none;
+    padding: 14px 36px;
+    font-size: 1rem;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    transition: background 0.2s;
+  }
+
+  .print-btn:hover { background: #333; }
+
+  .tip {
+    margin-top: 16px;
+    font-size: 0.8rem;
+    color: #999;
+  }
+
+  /* Card Grid */
+  .card-page {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+    gap: 0px;
+    width: 7.5in;
+    height: 10in;
+    margin: 0 auto;
+    page-break-after: always;
+    page-break-inside: avoid;
+  }
+
+  .card-page:last-child {
+    page-break-after: avoid;
+  }
+
+  /* Individual Card */
+  .card {
+    width: 3.75in;
+    height: 3.333in;
+    border: 1px dashed #ccc;
+    padding: 0.3in;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+    background: white;
+  }
+
+  .card-category {
+    font-size: 0.55rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2.5px;
+    color: #999;
+    margin-bottom: 4px;
+  }
+
+  .card-number {
+    position: absolute;
+    top: 0.25in;
+    right: 0.3in;
+    font-size: 0.6rem;
+    font-weight: 600;
+    color: #ddd;
+  }
+
+  .card-question {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem;
+    line-height: 1.4;
+    color: #1a1a1a;
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+  }
+
+  .card-subtext {
+    font-size: 0.6rem;
+    color: #aaa;
+    line-height: 1.5;
+    font-style: italic;
+    border-top: 1px solid #eee;
+    padding-top: 8px;
+    margin-top: 8px;
+  }
+
+  /* Special Card Styles */
+  .card.title-card {
+    background: #1a1a1a;
+    color: white;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .card.title-card .card-title-main {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    line-height: 1.3;
+    margin-bottom: 12px;
+  }
+
+  .card.title-card .card-title-sub {
+    font-size: 0.65rem;
+    font-weight: 300;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #999;
+  }
+
+  .card.title-card .card-title-tagline {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 0.75rem;
+    color: #777;
+    margin-top: 16px;
+  }
+
+  .card.phase-card {
+    background: #f8f7f4;
+  }
+
+  .card.phase-card .phase-label {
+    font-size: 0.55rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: #1a1a1a;
+    margin-bottom: 2px;
+  }
+
+  .card.phase-card .phase-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    color: #1a1a1a;
+    margin-bottom: 10px;
+  }
+
+  .card.phase-card .phase-body {
+    font-size: 0.62rem;
+    line-height: 1.65;
+    color: #555;
+    flex-grow: 1;
+  }
+
+  .card.phase-card .phase-body strong {
+    color: #1a1a1a;
+  }
+
+  .card.rules-card {
+    background: #f8f7f4;
+  }
+
+  .card.rules-card .rules-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+  }
+
+  .card.rules-card .rules-body {
+    font-size: 0.6rem;
+    line-height: 1.7;
+    color: #555;
+  }
+
+  .card.rules-card .rules-body li {
+    margin-bottom: 4px;
+    margin-left: 12px;
+  }
+
+  .card.blank-card {
+    background: #fafaf8;
+  }
+
+  .card.blank-card .blank-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    color: #ccc;
+    text-align: center;
+  }
+
+  .card.blank-card .blank-lines {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 18px;
+    padding: 0 0.1in;
+  }
+
+  .card.blank-card .blank-line {
+    border-bottom: 1px solid #e5e5e0;
+    height: 1px;
+  }
+
+  /* Category-specific accent bars */
+  .card[data-cat="desire"]::before,
+  .card[data-cat="creation"]::before,
+  .card[data-cat="mastery"]::before,
+  .card[data-cat="fear"]::before,
+  .card[data-cat="body"]::before,
+  .card[data-cat="witness"]::before,
+  .card[data-cat="mind"]::before,
+  .card[data-cat="senses"]::before,
+  .card[data-cat="purpose"]::before,
+  .card[data-cat="inner"]::before,
+  .card[data-cat="vision"]::before,
+  .card[data-cat="depth"]::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+  }
+
+  .card[data-cat="desire"]::before { background: #2d3436; }
+  .card[data-cat="creation"]::before { background: #e17055; }
+  .card[data-cat="mastery"]::before { background: #00b894; }
+  .card[data-cat="fear"]::before { background: #d63031; }
+  .card[data-cat="body"]::before { background: #e84393; }
+  .card[data-cat="witness"]::before { background: #6c5ce7; }
+  .card[data-cat="mind"]::before { background: #0984e3; }
+  .card[data-cat="senses"]::before { background: #fdcb6e; }
+  .card[data-cat="purpose"]::before { background: #00cec9; }
+  .card[data-cat="inner"]::before { background: #a29bfe; }
+  .card[data-cat="vision"]::before { background: #55a3e8; }
+  .card[data-cat="depth"]::before { background: #636e72; }
+
+  /* Print overrides */
+  @media print {
+    body { background: white; }
+    .screen-header { display: none; }
+    .card { border: 1px dashed #bbb; }
+    .card.title-card {
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .card.phase-card,
+    .card.rules-card,
+    .card.blank-card {
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .card[data-cat]::before {
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+  }
+
+  /* Screen spacing */
+  @media screen {
+    .card-page {
+      margin-top: 30px;
+      margin-bottom: 30px;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- Screen-only header -->
+<div class="screen-header">
+  <h1>What's Alive In You</h1>
+  <p>A family bucket list card deck &mdash; 18 cards across 3 pages</p>
+  <button class="print-btn" onclick="window.print()">Print Card Deck</button>
+  <p class="tip">Tip: Print double-sided, then cut along the dashed lines. Cardstock recommended.</p>
+</div>
+
+<!-- PAGE 1: Title + Phases + Rules -->
+<div class="card-page">
+
+  <!-- Card 1: Title -->
+  <div class="card title-card">
+    <div>
+      <div class="card-title-sub">A Family Bucket List Deck</div>
+      <div class="card-title-main">What's Alive<br>In You</div>
+      <div class="card-title-tagline">Not what you should want.<br>What you actually want.</div>
+    </div>
+  </div>
+
+  <!-- Card 2: How To Use -->
+  <div class="card rules-card">
+    <div class="rules-title">How To Use This Deck</div>
+    <div class="rules-body">
+      <ol>
+        <li><strong>Phase 1 (Solo):</strong> Each person takes the 12 prompt cards privately. Write down whatever comes to mind. No filtering. No one sees this yet.</li>
+        <li><strong>Phase 2 (Reveal):</strong> Come together. Each person shares 5&ndash;7 items. The only allowed response is "Tell me more about&hellip;"</li>
+        <li><strong>Phase 3 (Venn):</strong> Sort everything into Solo, Shared, and Family lists. All three matter equally.</li>
+      </ol>
+      <br>
+      <strong>There are no wrong answers. Weird is good. Small is good. "Unrealistic" is good.</strong>
+    </div>
+  </div>
+
+  <!-- Card 3: Phase 1 -->
+  <div class="card phase-card">
+    <div class="phase-label">Phase 1</div>
+    <div class="phase-title">Solo Expansion</div>
+    <div class="phase-body">
+      Take the 12 prompt cards somewhere alone. A bedroom, a coffee shop, a walk.
+      <br><br>
+      Read each card. Write whatever comes. Don't judge it. Don't ask "is this realistic?" Just capture what surfaces.
+      <br><br>
+      <strong>Time:</strong> 30&ndash;60 minutes, or spread across a few days.
+      <br><br>
+      <strong>The rule:</strong> Nobody sees your answers until Phase 2. This is yours first.
+    </div>
+  </div>
+
+  <!-- Card 4: Phase 2 -->
+  <div class="card phase-card">
+    <div class="phase-label">Phase 2</div>
+    <div class="phase-title">The Family Reveal</div>
+    <div class="phase-body">
+      Sit together. No phones. Each person shares 5&ndash;7 things from their lists.
+      <br><br>
+      <strong>The only rule:</strong> When someone shares, you may only respond with:
+      <br>&bull; "Tell me more about that."
+      <br>&bull; A genuine question.
+      <br><br>
+      <strong>Forbidden:</strong> "That's cool" (dismissive), "Why?" (interrogating), "We should do that together!" (hijacking).
+      <br><br>
+      Just listen. Let each person's desires exist on their own terms.
+    </div>
+  </div>
+
+  <!-- Card 5: Phase 3 -->
+  <div class="card phase-card">
+    <div class="phase-label">Phase 3</div>
+    <div class="phase-title">The Venn</div>
+    <div class="phase-body">
+      After everyone has shared, three lists emerge naturally:
+      <br><br>
+      <strong>Solo</strong> &mdash; Things that are yours alone. These matter. A bucket list isn't only shared experiences.
+      <br><br>
+      <strong>Overlap</strong> &mdash; Things two or more people share. These are gold&mdash;natural allies for making it happen.
+      <br><br>
+      <strong>Family</strong> &mdash; Things you want to experience together specifically.
+      <br><br>
+      Your family bucket list is the <em>union</em> of all three.
+    </div>
+  </div>
+
+  <!-- Card 6: Ground Rules -->
+  <div class="card rules-card">
+    <div class="rules-title">Ground Rules</div>
+    <div class="rules-body">
+      <ol>
+        <li><strong>No size filter.</strong> "Learn to whistle with two fingers" sits next to "live abroad for a year." Both count.</li>
+        <li><strong>No judgment.</strong> Not of yourself, not of each other.</li>
+        <li><strong>Solo items are sacred.</strong> Nobody gets to decide someone else's desires aren't "family enough."</li>
+        <li><strong>Revisit yearly.</strong> What's alive in you changes. That's the point.</li>
+        <li><strong>Start one within a week.</strong> Pick the smallest, most doable item from anyone's list and do it. Momentum matters more than planning.</li>
+      </ol>
+    </div>
+  </div>
+
+</div>
+
+<!-- PAGE 2: Prompt Cards 1-6 -->
+<div class="card-page">
+
+  <!-- Prompt 1: The Envy Signal -->
+  <div class="card" data-cat="desire">
+    <div>
+      <div class="card-category">The Envy Signal</div>
+      <div class="card-number">01</div>
+    </div>
+    <div class="card-question">
+      When you see someone doing something and feel a pang of jealousy or longing&mdash;what are they doing?
+    </div>
+    <div class="card-subtext">
+      Envy is the most honest signal you have. It bypasses your rational filter completely. Don't judge what comes up. Write it down.
+    </div>
+  </div>
+
+  <!-- Prompt 2: Deathbed Regret -->
+  <div class="card" data-cat="depth">
+    <div>
+      <div class="card-category">The Deathbed Regret</div>
+      <div class="card-number">02</div>
+    </div>
+    <div class="card-question">
+      You're 85 years old, looking back. What do you regret never trying? Not never doing&mdash;never <em>trying</em>.
+    </div>
+    <div class="card-subtext">
+      The distinction matters. We rarely regret failed attempts. We regret the things we never started.
+    </div>
+  </div>
+
+  <!-- Prompt 3: The Secret Self -->
+  <div class="card" data-cat="inner">
+    <div>
+      <div class="card-category">The Secret Self</div>
+      <div class="card-number">03</div>
+    </div>
+    <div class="card-question">
+      If nobody you know would ever find out, what would you spend an entire year doing?
+    </div>
+    <div class="card-subtext">
+      This removes social pressure, expectations, and identity. What's left is closer to what you actually want.
+    </div>
+  </div>
+
+  <!-- Prompt 4: The Mastery Pull -->
+  <div class="card" data-cat="mastery">
+    <div>
+      <div class="card-category">The Mastery Pull</div>
+      <div class="card-number">04</div>
+    </div>
+    <div class="card-question">
+      If you woke up tomorrow having completely mastered one skill, and it changed how you see yourself&mdash;what is it?
+    </div>
+    <div class="card-subtext">
+      Not "what would be useful." What skill would shift your identity? That pull toward mastery is telling you something.
+    </div>
+  </div>
+
+  <!-- Prompt 5: The Witness -->
+  <div class="card" data-cat="witness">
+    <div>
+      <div class="card-category">The Witness Desire</div>
+      <div class="card-number">05</div>
+    </div>
+    <div class="card-question">
+      What do you want to <em>see happen</em> in the world, in nature, in science, in history&mdash;even if you play no role in making it happen?
+    </div>
+    <div class="card-subtext">
+      Not everything on a bucket list requires you to act. Some of the deepest desires are about witnessing.
+    </div>
+  </div>
+
+  <!-- Prompt 6: The Creation Itch -->
+  <div class="card" data-cat="creation">
+    <div>
+      <div class="card-category">The Creation Itch</div>
+      <div class="card-number">06</div>
+    </div>
+    <div class="card-question">
+      What do you want to make that doesn't exist yet? A thing, a piece of art, a business, a place, a community&mdash;anything.
+    </div>
+    <div class="card-subtext">
+      Humans are creators. This question finds the thing you want to bring into the world, not just experience in it.
+    </div>
+  </div>
+
+</div>
+
+<!-- PAGE 3: Prompt Cards 7-12 -->
+<div class="card-page">
+
+  <!-- Prompt 7: The Fear Flip -->
+  <div class="card" data-cat="fear">
+    <div>
+      <div class="card-category">The Fear Flip</div>
+      <div class="card-number">07</div>
+    </div>
+    <div class="card-question">
+      What scares you that, if you did it, would make you a fundamentally different person on the other side?
+    </div>
+    <div class="card-subtext">
+      Fear and desire are often the same signal. The things that scare us most are frequently the things that would grow us most.
+    </div>
+  </div>
+
+  <!-- Prompt 8: The Recurring Dream -->
+  <div class="card" data-cat="vision">
+    <div>
+      <div class="card-category">The Recurring Dream</div>
+      <div class="card-number">08</div>
+    </div>
+    <div class="card-question">
+      What keeps showing up? A place you think about, a type of day you keep imagining, a version of your life that flickers in your mind?
+    </div>
+    <div class="card-subtext">
+      Recurring thoughts are data. If your mind keeps returning somewhere, it's trying to tell you something. What is it?
+    </div>
+  </div>
+
+  <!-- Prompt 9: The Body -->
+  <div class="card" data-cat="body">
+    <div>
+      <div class="card-category">The Body Question</div>
+      <div class="card-number">09</div>
+    </div>
+    <div class="card-question">
+      What do you want your body to be able to <em>do</em>? Not look like. Do.
+    </div>
+    <div class="card-subtext">
+      Run a trail. Hold a handstand. Swim across a lake. Dance without thinking. Your body is a vehicle&mdash;where does it want to go?
+    </div>
+  </div>
+
+  <!-- Prompt 10: The Understanding Hunger -->
+  <div class="card" data-cat="mind">
+    <div>
+      <div class="card-category">The Understanding Hunger</div>
+      <div class="card-number">10</div>
+    </div>
+    <div class="card-question">
+      What do you want to deeply understand? A subject, a culture, a person, a system, a language, how something really works?
+    </div>
+    <div class="card-subtext">
+      Not "learn about." Understand. The kind of knowing where you could explain it to anyone and feel it in your bones.
+    </div>
+  </div>
+
+  <!-- Prompt 11: The Contribution -->
+  <div class="card" data-cat="purpose">
+    <div>
+      <div class="card-category">The Contribution Mark</div>
+      <div class="card-number">11</div>
+    </div>
+    <div class="card-question">
+      If you could solve one problem&mdash;for your street, your school, your city, or the entire world&mdash;what would it be?
+    </div>
+    <div class="card-subtext">
+      Scale doesn't matter. "Fix the broken bench at the park" and "end loneliness" are both valid. What problem pulls at you?
+    </div>
+  </div>
+
+  <!-- Prompt 12: The Texture -->
+  <div class="card" data-cat="senses">
+    <div>
+      <div class="card-category">The Texture Question</div>
+      <div class="card-number">12</div>
+    </div>
+    <div class="card-question">
+      Describe a <em>moment</em> you want to experience. Not an event. A moment. What does the air feel like? What do you hear? Where are you?
+    </div>
+    <div class="card-subtext">
+      This bypasses the "bucket list item" framing entirely. It gets at the felt experience you're actually chasing.
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
