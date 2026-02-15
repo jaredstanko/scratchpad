@@ -1,22 +1,25 @@
-## Raspberry Pi 4 + **USB mic** + **raspOVOS**: simple setup instructions
+## Simple setup instructions (Raspberry Pi 4 + **USB mic** + **raspOVOS**)
 
-(Goal: OpenVoiceOS working + microphone listening reliably, then OpenAI API answers that are short but thorough)
-
----
-
-# Part 1 — raspOVOS install + USB mic working
-
-## 1) Flash and boot raspOVOS
-
-1. Download the **raspOVOS (Raspberry Pi 4)** image from the OVOS downloads page.
-2. Flash it to a microSD (Raspberry Pi Imager or Balena Etcher).
-3. Boot the Pi (Ethernet recommended for first boot), log in, and make sure it has internet.
+…and **Part 2 uses OpenRouter** with **`openai/gpt-4o-mini`**
 
 ---
 
-## 2) Plug in the USB microphone and confirm the Pi sees it
+# Part 1 — raspOVOS + USB microphone (working end-to-end)
 
-Run:
+### 1) Boot raspOVOS
+
+1. Download the **raspOVOS** image and flash it to microSD.
+2. Boot the Pi, connect to network, log in.
+
+On raspOVOS, your user config is typically:
+
+* `~/.config/mycroft/mycroft.conf` ([GitHub][1])
+
+---
+
+### 2) Verify the USB mic is detected (OS-level)
+
+Plug in the USB mic, then run:
 
 ```bash
 arecord -l
@@ -24,58 +27,28 @@ arecord -l
 
 You should see your USB mic listed as a capture device.
 
-### Quick record/playback test (proves the mic works at the OS level)
-
-1. Record 5 seconds:
+Quick record/play test (often `hw:1,0` for the USB mic, but check your `arecord -l` output):
 
 ```bash
-arecord -f cd -d 5 test.wav
-```
-
-2. Play it back:
-
-```bash
+arecord -D plughw:1,0 -f cd -t wav -d 5 test.wav
 aplay test.wav
 ```
 
-If you can hear your recording, the mic hardware and ALSA are good.
+If you hear your recording back, the mic works at the OS level.
 
 ---
 
-## 3) Confirm OVOS basics work (speaker output)
+### 3) Make OVOS listen to the correct mic (recommended method)
 
-Run:
+The most reliable way on Pi is to use the SoundDevice microphone plugin so you can explicitly pick a device. ([GitHub][1])
 
-```bash
-ovos-speak "OpenVoiceOS audio output test."
-```
-
-If you hear speech, your output is fine.
-
----
-
-## 4) Make OVOS listen on the USB mic (most reliable method)
-
-On raspOVOS, the user configuration file is typically:
-`~/.config/mycroft/mycroft.conf`
-
-The most controllable way to select a specific mic is the **SoundDevice microphone plugin**, which supports choosing a device in config.
-
-### 4A) Install the SoundDevice mic plugin
+Install it:
 
 ```bash
 pip install ovos-microphone-plugin-sounddevice
 ```
 
-### 4B) Find the USB mic “device index”
-
-SoundDevice sees devices slightly differently than `arecord`. Easiest approach: try indices until it hears you.
-
-Start with `device: 0`, then `1`, then `2`, etc.
-
-### 4C) Set the mic plugin + device in `mycroft.conf`
-
-Edit:
+Edit your OVOS config:
 
 ```bash
 nano ~/.config/mycroft/mycroft.conf
@@ -94,97 +67,87 @@ Add (or merge) this:
 }
 ```
 
-* Change `"device": 1` to 0/2/3 if needed.
+* Start with `"device": 1`.
+* If it doesn’t hear you, try `0`, then `2`, etc. (device numbering depends on what audio devices you have plugged in).
 
 ---
 
-## 5) Restart OVOS services
-
-On raspOVOS, service names can vary a bit by image/version, but these are the common ways to restart:
-
-### Option A (systemd service name used on many installs)
-
-```bash
-sudo systemctl restart ovos
-```
-
-### Option B (reboot = always works)
-
-```bash
-sudo reboot
-```
-
----
-
-## 6) Test that OVOS is actually hearing you
+### 4) Smoke test OVOS audio + listening
 
 Run:
 
 ```bash
+ovos-speak "Microphone setup test."
 ovos-listen
 ```
 
-Speak after the listening cue.
+* `ovos-speak` confirms your speaker output is working.
+* `ovos-listen` should “wake up” and actually capture speech.
 
-If it’s not responding:
-
-* Change the `"device"` number in `mycroft.conf`
-* Restart/reboot
-* Try again
-
-(With USB mics, “wrong device index” is the #1 issue.)
+If OVOS speaks but doesn’t hear you: it’s almost always the wrong `device` index in the config.
 
 ---
 
-# Part 2 — OpenAI API integration for short but thorough answers (Personas)
+# Part 2 — OpenRouter integration (model: **`openai/gpt-4o-mini`**) for short, thorough answers
 
-OVOS now prefers **Personas** for LLM responses; older ChatGPT fallback skills have been replaced by this approach.
+This uses OVOS “Personas” + the OVOS OpenAI solver plugin, pointed at OpenRouter’s OpenAI-compatible API.
 
-## 1) Create and store your OpenAI API key safely
+### 1) Get an OpenRouter API key
 
-Use OpenAI’s key safety guidance (don’t paste keys into screenshots, repos, etc.).
+Create an API key in OpenRouter. Authentication is via:
+
+* `Authorization: Bearer <key>` ([OpenRouter][2])
+
+OpenRouter’s OpenAI-compatible base URL is:
+
+* `https://openrouter.ai/api/v1` ([OpenRouter][2])
 
 ---
 
-## 2) Install the OVOS OpenAI persona plugin
+### 2) Install the OVOS OpenAI solver plugin
+
+On the Pi:
 
 ```bash
 pip install ovos-openai-plugin
 ```
 
+(That plugin provides the solver used by personas.) ([GitHub][1])
+
 ---
 
-## 3) Create a persona that enforces “short but thorough”
+### 3) Create a Persona that calls OpenRouter + `openai/gpt-4o-mini`
 
-Create this file:
+Create a persona file:
 
 ```bash
 mkdir -p ~/.config/ovos_persona
-nano ~/.config/ovos_persona/openai-short-thorough.json
+nano ~/.config/ovos_persona/openrouter-gpt4o-mini-short.json
 ```
 
-Paste:
+Paste this:
 
 ```json
 {
-  "name": "OpenAI Short Thorough",
+  "name": "OpenRouter GPT-4o-mini",
   "solvers": ["ovos-solver-openai-plugin"],
   "ovos-solver-openai-plugin": {
-    "api_url": "https://api.openai.com/v1",
-    "key": "sk-YOUR_KEY_HERE",
-    "model": "gpt-4.1-mini",
-    "system_prompt": "You are a voice assistant. Answer in 3–6 sentences. Be brief but complete. Use plain language. If needed, ask ONE clarifying question. Avoid long lists unless requested."
+    "api_url": "https://openrouter.ai/api/v1",
+    "key": "OR_YOUR_OPENROUTER_KEY_HERE",
+    "model": "openai/gpt-4o-mini",
+    "system_prompt": "You are a voice assistant. Answer in 3–6 sentences. Be concise but thorough. Use plain language. If the request is ambiguous, ask ONE short clarifying question. No filler."
   }
 }
 ```
 
-This JSON structure (persona + solver config) matches the ovos-openai-plugin documentation.
+Why these fields:
 
-**Optional (recommended):** instead of putting your key in the file, set an environment variable and reference it if your setup supports it—this avoids leaving keys in plaintext. (Key safety best practice.)
+* OpenRouter base URL: `https://openrouter.ai/api/v1` ([OpenRouter][2])
+* Model name on OpenRouter: `openai/gpt-4o-mini` ([OpenRouter][3])
 
 ---
 
-## 4) Tell OVOS to use the persona as a fallback (so it answers anything)
+### 4) Enable Personas as fallback (so it answers when no skill matches)
 
 Edit:
 
@@ -192,49 +155,60 @@ Edit:
 nano ~/.config/mycroft/mycroft.conf
 ```
 
-Add (or merge) this persona config:
+Add (or merge) something like:
 
 ```json
 {
   "intents": {
     "persona": {
       "handle_fallback": true,
-      "default_persona": "OpenAI Short Thorough"
+      "default_persona": "OpenRouter GPT-4o-mini"
     }
   }
 }
 ```
 
-The OVOS Personas manual documents setting a default persona and enabling persona fallback behavior via config.
-
-Restart OVOS (or reboot) after saving.
+This tells OVOS to use your persona for fallback answers (great for “general questions”).
 
 ---
 
-## 5) Use it
+### 5) Restart OVOS services
 
-Try voice or typed testing:
-
-### Voice
-
-* Ask something that isn’t a built-in skill, e.g. “Explain what DNS is.”
-
-### Typed (handy for debugging)
+If your raspOVOS image uses systemd services, a safe generic approach is reboot:
 
 ```bash
-ovos-say-to "Explain DNS in simple terms."
+sudo reboot
 ```
 
-If fallback is enabled, OVOS should answer via the persona when no skill matches.
+---
+
+### 6) Test it
+
+After reboot:
+
+```bash
+ovos-say-to "Explain what DHCP is."
+```
+
+Then try voice:
+
+1. `ovos-listen`
+2. Ask a general question (that won’t match an installed skill), like:
+
+   * “What’s the difference between RAM and storage?”
+
+If configured correctly, the response should follow your “short but thorough” prompt style.
 
 ---
 
-## Troubleshooting quick hits (USB mic + raspOVOS)
+## Notes that save headaches
 
-* **`arecord` works but `ovos-listen` doesn’t:** change the SoundDevice `"device"` index.
-* **No sound output:** test `ovos-speak "test"` and confirm your speaker/default output is correct.
-* **Slow responses:** use a smaller/faster model and keep the system prompt strict.
+* OpenRouter is OpenAI-chat compatible and normalizes responses to OpenAI’s chat schema. ([OpenRouter][4])
+* If you ever change USB devices, your mic device index may change—re-check and adjust `"device"`.
 
----
+If you tell me what USB mic you’re using (exact model) and whether you have HDMI audio / a USB speaker plugged in too, I can suggest the most likely correct `device` index settings and a quick way to confirm it.
 
-If you want, tell me what `arecord -l` shows (just the device names, no serials) and I’ll suggest the most likely `"device"` index to try first.
+[1]: https://github.com/OpenVoiceOS/ovos-openai-plugin?utm_source=chatgpt.com "OpenVoiceOS/ovos-openai-plugin - GitHub"
+[2]: https://openrouter.ai/docs/api/reference/authentication?utm_source=chatgpt.com "API Authentication | OpenRouter OAuth and API Keys | Documentation"
+[3]: https://openrouter.ai/openai/gpt-4o-mini?utm_source=chatgpt.com "GPT-4o-mini - API, Providers, Stats - OpenRouter"
+[4]: https://openrouter.ai/docs/api/reference/overview?utm_source=chatgpt.com "OpenRouter API Reference | Complete API Documentation"
