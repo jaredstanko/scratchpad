@@ -4,6 +4,13 @@
 **Scope:** Historical background through current situation  
 **Methodology:** Multi-source synthesis with parallel AI research agents (ClaudeResearcher, GrokResearcher)  
 
+_This analysis was compiled on February 13, 2026, using multi-source 
+research including parallel AI research agents conducting live web 
+searches across 45+ search threads. It represents the best available 
+public information as of this date. The situation is evolving rapidly, 
+particularly regarding the June 2026 peace deadline and anticipated 
+Russian spring offensive._
+
 ---
 
 ## Table of Contents
